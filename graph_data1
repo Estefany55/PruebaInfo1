@@ -1,0 +1,10 @@
+Nodes:
+Z,0,0
+H,6,8
+V,1,0
+N,1,4
+K,1,8
+Segments:
+KN,K,N
+ZK,Z,K
+KV,K,V
