@@ -90,17 +90,7 @@ AddNodeToPath(p, n1)
 AddNodeToPath(p, n2)
 AddNodeToPath(p, n3)
 print("Path tras agregar nodos:", p)
-
-
-# Verificar si contiene nodos
-print("Contiene B?", ContainsNode(p, n2))  # True
-print("Contiene D?", ContainsNode(p, Node("D", 1, 1)))  # False
-
-
-# Verificar coste hasta un nodo
-print("Coste hasta B:", CostToNode(p, n2))  # Debe ser 5.0
-print("Coste hasta C:", CostToNode(p, n3))  # Debe ser 10.0
-print("Coste hasta D:", CostToNode(p, Node("D", 1, 1)))  # -1
+G = Graph()
 
 
 from path import *
@@ -217,6 +207,7 @@ def shortest_path():
     canvas_picture.config(width=600, height=400)
     canvas_picture.grid(row=0, column=0, padx=5, pady=5,
                             sticky=tk.N + tk.E + tk.W + tk.S)
+    G=CreateGraph_1()
     path = FindShortestPath(G, "A", "B")
     if path:
         print("Path found:", [n.name for n in path.nodes])
@@ -236,7 +227,6 @@ def path():
     canvas_picture.config(width=600, height=400)
     canvas_picture.grid(row=0, column=0, padx=5, pady=5,
                             sticky=tk.N + tk.E + tk.W + tk.S)
-    G = Graph()
 
     a = PlotPath(G, p)
     print(a)
