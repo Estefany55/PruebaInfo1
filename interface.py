@@ -3,9 +3,108 @@ import tkinter as tk
 from tkinter import *
 from matplotlib.backend_bases import MouseEvent
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
-from test_graph import *
 from graph import *
+
+def CreateGraph_1():
+  G = Graph()
+  AddNode(G, Node("A", 1, 20))
+  AddNode(G, Node("B", 8, 17))
+  AddNode(G, Node("C", 15, 20))
+  AddNode(G, Node("D", 18, 15))
+  AddNode(G, Node("E", 2, 4))
+  AddNode(G, Node("F", 6, 5))
+  AddNode(G, Node("G", 12, 12))
+  AddNode(G, Node("H", 10, 3))
+  AddNode(G, Node("I", 19, 1))
+  AddNode(G, Node("J", 13, 5))
+  AddNode(G, Node("K", 3, 15))
+  AddNode(G, Node("L", 4, 10))
+  AddSegment(G, "AB", "A", "B")
+  AddSegment(G, "AE", "A", "E")
+  AddSegment(G, "AK", "A", "K")
+  AddSegment(G, "BA", "B", "A")
+  AddSegment(G, "BC", "B", "C")
+  AddSegment(G, "BF", "B", "F")
+  AddSegment(G, "BK", "B", "K")
+  AddSegment(G, "BG", "B", "G")
+  AddSegment(G, "CD", "C", "D")
+  AddSegment(G, "CG", "C", "G")
+  AddSegment(G, "DG", "D", "G")
+  AddSegment(G, "DH", "D", "H")
+  AddSegment(G, "DI", "D", "I")
+  AddSegment(G, "EF", "E", "F")
+  AddSegment(G, "FL", "F", "L")
+  AddSegment(G, "GB", "G", "B")
+  AddSegment(G, "GF", "G", "F")
+  AddSegment(G, "GH", "G", "H")
+  AddSegment(G, "ID", "I", "D")
+  AddSegment(G, "IJ", "I", "J")
+  AddSegment(G, "JI", "J", "I")
+  AddSegment(G, "KA", "K", "A")
+  AddSegment(G, "KL", "K", "L")
+  AddSegment(G, "LK", "L", "K")
+  AddSegment(G, "LF", "L", "F")
+  return G
+
+def CreateGraph_2():
+  G = Graph()
+  AddNode(G, Node("A", 1, 20))
+  AddNode(G, Node("B", 7, 17))
+  AddNode(G, Node("C", 1, 20))
+  AddNode(G, Node("D", 8, 15))
+  AddNode(G, Node("E", 2, 4))
+  AddNode(G, Node("F", 6, 5))
+  AddNode(G, Node("G", 12, 12))
+  AddSegment(G, "AB", "A", "B")
+  AddSegment(G, "AE", "A", "E")
+  AddSegment(G, "AK", "A", "K")
+  AddSegment(G, "BA", "B", "A")
+  AddSegment(G, "BC", "B", "C")
+  AddSegment(G, "BF", "B", "F")
+  AddSegment(G, "BK", "B", "K")
+  AddSegment(G, "FL", "F", "L")
+  AddSegment(G, "GB", "G", "B")
+  AddSegment(G, "GF", "G", "F")
+  AddSegment(G, "GH", "G", "H")
+  AddSegment(G, "ID", "I", "D")
+  AddSegment(G, "IJ", "I", "J")
+  AddSegment(G, "JI", "J", "I")
+  AddSegment(G, "KA", "K", "A")
+  AddSegment(G, "KL", "K", "L")
+  AddSegment(G, "LK", "L", "K")
+  AddSegment(G, "LF", "L", "F")
+  return G
+
+n1 = Node("A", 0, 0)
+n2 = Node("B", 3, 4)
+n3 = Node("C", 6, 7)
+
+
+# Crear un camino
+p = Path()
+print("Path inicial:", p)
+
+
+# Agregar nodos al camino
+AddNodeToPath(p, n1)
+AddNodeToPath(p, n2)
+AddNodeToPath(p, n3)
+print("Path tras agregar nodos:", p)
+
+
+# Verificar si contiene nodos
+print("Contiene B?", ContainsNode(p, n2))  # True
+print("Contiene D?", ContainsNode(p, Node("D", 1, 1)))  # False
+
+
+# Verificar coste hasta un nodo
+print("Coste hasta B:", CostToNode(p, n2))  # Debe ser 5.0
+print("Coste hasta C:", CostToNode(p, n3))  # Debe ser 10.0
+print("Coste hasta D:", CostToNode(p, Node("D", 1, 1)))  # -1
+
+
+from path import *
+
 
 
 def graph1():
@@ -107,6 +206,40 @@ def files():
                         sticky=tk.N + tk.E + tk.W + tk.S)
     Plot(f)
 
+def shortest_path():
+    fig,ax=plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                            sticky=tk.N + tk.E + tk.W + tk.S)
+    path = FindShortestPath(G, "A", "B")
+    if path:
+        print("Path found:", [n.name for n in path.nodes])
+        print("Total cost:", path.cost)
+        PlotPath(G, path)
+    else:
+        print("No path found.")
+
+def path():
+    fig,ax=plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                            sticky=tk.N + tk.E + tk.W + tk.S)
+    G = Graph()
+
+    a = PlotPath(G, p)
+    print(a)
 
 
 root= tk.Tk()
@@ -118,12 +251,14 @@ root.rowconfigure(0,weight=1)
 root.rowconfigure(1,weight=1)
 
 #Columna 0, fila 0: Botones para ver los diferentes gráficos o nodos
-button_graph_frame = tk.LabelFrame(root, text='Gráficos y nodos')
+button_graph_frame = tk.LabelFrame(root, text='Gráficos, nodos y paths')
 button_graph_frame.grid (row=0, column=0, padx=5, pady=5,
                             sticky=tk.N + tk.E + tk.W + tk.S)
 button_graph_frame.rowconfigure(0,weight=1)
 button_graph_frame.rowconfigure(1,weight=1)
 button_graph_frame.rowconfigure(2,weight=1)
+button_graph_frame.rowconfigure(3,weight=1)
+button_graph_frame.rowconfigure(4,weight=1)
 button_graph_frame.columnconfigure(0,weight=1)
 
 button1 = tk.Button(button_graph_frame, text='Gráfico', command=graph1)
@@ -135,6 +270,15 @@ button2.grid(row=1, column=0, padx=5, pady=5,
 button3 = tk.Button(button_graph_frame, text='Nodo', command=nodo)
 button3.grid(row=2, column=0, padx=5, pady=5,
              sticky=tk.N + tk.E + tk.W + tk.S)
+
+button4 = tk.Button(button_graph_frame, text='Path', command=path)
+button4.grid(row=3, column=0, padx=5, pady=5,
+             sticky=tk.N + tk.E + tk.W + tk.S)
+
+button5 = tk.Button(button_graph_frame, text='Shortest Path', command=shortest_path)
+button5.grid(row=4, column=0, padx=5, pady=5,
+             sticky=tk.N + tk.E + tk.W + tk.S)
+
 
 #Columna 0, fila 1: introducir un file para poder ver su gráfico
 input_frame = tk.LabelFrame(root,text='File y su respectivo gráfico:')

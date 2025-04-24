@@ -20,13 +20,6 @@ class Graph:
        self.nodes = []  # Lista de nodos en el grafo
        self.segments = []  # Lista de segmentos (aristas) en el grafo
 
-
-
-
-
-
-
-
 # Función para agregar un nodo al grafo
 def AddNode(g, n):
    """Añade un nodo al grafo si no está ya en la lista.
@@ -148,7 +141,7 @@ def Plot(g):
    plt.ylabel('Y')
    plt.title("Graph with nodes and segments")
    plt.grid()
-   plt.show()  # Muestra el gráfico
+   plt.show() # Muestra el gráfico
 
 
 
@@ -210,7 +203,7 @@ def PlotNode(g, name):
    plt.ylabel('Y')
    plt.title(f"Graph with nodes and segments for node '{name}'")
    plt.grid()
-   plt.show()  # Muestra el gráfico
+   plt.show() # Muestra el gráfico
 
 
 
