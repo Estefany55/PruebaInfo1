@@ -1,9 +1,12 @@
 from node import Node
 from path import *
 from graph import *
+
 from node import Node
 from path import *
 from graph import*
+
+
 # Crear algunos nodos
 n1 = Node("A", 0, 0)
 n2 = Node("B", 3, 4)

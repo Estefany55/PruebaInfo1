@@ -8,10 +8,6 @@ class Path:
        self.cost = 0.0   # Coste total del camino
 
 
-
-
-
-
 def AddNodeToPath(path, node):
    if path.nodes:
        path.cost += Distance(path.nodes[-1], node)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Importa la clase Segment desde el archivo segment.py
 from segment import Segment
 
@@ -16,6 +17,7 @@ from path import Path, AddNodeToPath, ContainsNode, CostToNode
 
 
 # Define la clase Graph que representa un grafo con nodos y segmentos
+
 class Graph:
    def __init__(self):
        """Constructor de la clase Graph.
@@ -25,12 +27,6 @@ class Graph:
        """
        self.nodes = []  # Lista de nodos en el grafo
        self.segments = []  # Lista de segmentos (aristas) en el grafo
-
-
-
-
-
-
 
 
 # Función para agregar un nodo al grafo
@@ -220,7 +216,6 @@ def PlotNode(g, name):
 
 
 
-
 def LoadGraphFromFile(file_path):
    """Carga un grafo desde un archivo de texto.
 
@@ -333,7 +328,6 @@ def FindShortestPath(G, nameOrg, nameDst):
    origin = next((n for n in G.nodes if n.name == nameOrg), None)
    destination = next((n for n in G.nodes if n.name == nameDst), None)
 
-
    if origin is None or destination is None:
        print("Origen o destino no encontrado en el grafo.")
        return None
@@ -372,11 +366,8 @@ def FindShortestPath(G, nameOrg, nameDst):
            for node in current_path.nodes:
                AddNodeToPath(new_path, node)
            AddNodeToPath(new_path, neighbor)
-
-
            estimated_cost = CostToNode(new_path, neighbor) + Distance(neighbor, destination)
            if estimated_cost < best_cost:
                open_paths.append(new_path)
-
 
    return best_path

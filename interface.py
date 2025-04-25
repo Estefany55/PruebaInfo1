@@ -141,6 +141,7 @@ def shortest_path():
     destination = selected_nodes[1].name
     fig, ax = plt.subplots()
     path = FindShortestPath(G, origin, destination)
+
     if path:
         print("Path found:", [n.name for n in path.nodes])
         print("Total cost:", path.cost)
