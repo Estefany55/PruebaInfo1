@@ -5,7 +5,7 @@ version 1 generada por Estefany
 version 1 verificada por Diana   
 <<<<<<< HEAD
 
-version 1 comunicada por Nuria   
+version 1 cmodificada por Nuria   
 
 version 2 modificada por Estefany y Roger
 
