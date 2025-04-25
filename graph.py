@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Importa la clase Segment desde el archivo segment.py
 from segment import Segment
 
