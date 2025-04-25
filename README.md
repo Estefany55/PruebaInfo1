@@ -9,7 +9,7 @@ version 1 comunicada por Nuria
 
 version 2 modificada por Estefany y Roger
 
-version 2 modificada por Núria
+version 2 comunicada por Núria
 
 url del video: https://youtu.be/-nmFVKJrjP8
 =======
