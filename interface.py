@@ -98,39 +98,84 @@ def CreateGraph_2():
 # Funciones de botones
 def graph1():
     fig, ax = plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                        sticky=tk.N + tk.E + tk.W + tk.S)
     global G
     G = CreateGraph_1()
     Plot(G)
-    plt.show()
+
 
 def graph2():
     fig, ax = plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                        sticky=tk.N + tk.E + tk.W + tk.S)
     global G
     G = CreateGraph_2()
     Plot(G)
-    plt.show()
+
 
 def nodo():
     fig, ax = plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                        sticky=tk.N + tk.E + tk.W + tk.S)
     global G
     G = CreateGraph_1()
     Plot(G)
     fig.canvas.mpl_connect('button_press_event', on_click)
-    plt.show()
+
 
 def files():
     file_path = entry.get()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                        sticky=tk.N + tk.E + tk.W + tk.S)
     if file_path:
         fig, ax = plt.subplots()
         global G
         G = LoadGraphFromFile(file_path)
         Plot(G)
-        plt.show()
+
 
 def path():
     fig, ax = plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                        sticky=tk.N + tk.E + tk.W + tk.S)
     PlotPath(G, p)
-    plt.show()
+
 
 def shortest_path():
     global selected_nodes
@@ -140,6 +185,15 @@ def shortest_path():
     origin = selected_nodes[0].name
     destination = selected_nodes[1].name
     fig, ax = plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                        sticky=tk.N + tk.E + tk.W + tk.S)
     path = FindShortestPath(G, origin, destination)
 
     if path:
@@ -149,7 +203,7 @@ def shortest_path():
     else:
         print("No path found.")
     selected_nodes.clear()
-    plt.show()
+
 
 def reachable():
     global selected_nodes
@@ -165,13 +219,21 @@ def reachable():
             visited.add(current)
             to_visit.extend(current.neighbors)
     fig, ax = plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                        sticky=tk.N + tk.E + tk.W + tk.S)
     for node in G.nodes:
         color = 'green' if node in visited else 'gray'
         plt.plot(node.x, node.y, 'o', color=color)
         plt.text(node.x, node.y, node.name, fontsize=9)
     plt.title(f"Nodos alcanzables desde {origin.name}")
     plt.grid()
-    plt.show()
     selected_nodes.clear()
 
 def on_click(event: MouseEvent):
