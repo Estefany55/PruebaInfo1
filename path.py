@@ -50,4 +50,4 @@ def PlotPath(graph, path):
    plt.ylabel('Y')
    plt.title('Path in Graph')
    plt.grid()
-   plt.show()
+

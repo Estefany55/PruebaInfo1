@@ -7,6 +7,7 @@ from airSpace import *
 from graph import *
 from path import *
 
+
 selected_nodes = []
 G = None  # Se cargará con el espacio aéreo real
 
@@ -80,6 +81,7 @@ def show_shortest_path():
     origin = selected_nodes[0].name
     destination = selected_nodes[1].name
     path = FindShortestPath(G, origin, destination)
+    plt.close('all')  # Cierra cualquier ventana de matplotlib anterior
     fig, ax = plt.subplots()
     draw_on_canvas(fig)
     if path:
@@ -113,6 +115,130 @@ def show_reachability():
     plt.grid()
     selected_nodes.clear()
 
+from tkinter import simpledialog, filedialog
+import os
+
+def show_example_graph():
+    global G
+    fig, ax = plt.subplots()
+    draw_on_canvas(fig)
+    G = CreateGraph_1()
+    Plot(G)
+    fig.canvas.mpl_connect('button_press_event', on_click)
+    print("Grafo de ejemplo cargado.")
+
+def show_custom_graph():
+    global G
+    fig, ax = plt.subplots()
+    draw_on_canvas(fig)
+    G = CreateGraph_2()
+    Plot(G)
+    fig.canvas.mpl_connect('button_press_event', on_click)
+    print("Grafo inventado cargado.")
+
+def load_graph_from_file():
+    global G
+    file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+    if file_path:
+        G = LoadGraphFromFile(file_path)
+        if G:
+            fig, ax = plt.subplots()
+            draw_on_canvas(fig)
+            Plot(G)
+            fig.canvas.mpl_connect('button_press_event', on_click)
+            print(f"Grafo cargado desde: {file_path}")
+        else:
+            print("No se pudo cargar el grafo.")
+
+def add_node():
+    global G
+    if G is None:
+        print("Crea o carga primero un grafo.")
+        return
+
+    name = simpledialog.askstring("Añadir nodo", "Nombre del nodo:")
+    x = simpledialog.askfloat("Añadir nodo", "Coordenada X:")
+    y = simpledialog.askfloat("Añadir nodo", "Coordenada Y:")
+
+    if name and x is not None and y is not None:
+        new_node = Node(name, x, y)
+        if AddNode(G, new_node):
+            print(f"Nodo {name} añadido correctamente.")
+            fig, ax = plt.subplots()
+            draw_on_canvas(fig)
+            Plot(G)
+            fig.canvas.mpl_connect('button_press_event', on_click)
+        else:
+            print(f"El nodo {name} ya existe.")
+
+def add_segment():
+    global G
+    if G is None:
+        print("Crea o carga primero un grafo.")
+        return
+
+    origin = simpledialog.askstring("Añadir segmento", "Nombre del nodo origen:")
+    destination = simpledialog.askstring("Añadir segmento", "Nombre del nodo destino:")
+
+    if origin and destination:
+        name = origin + destination
+        if AddSegment(G, name, origin, destination):
+            print(f"Segmento {name} añadido correctamente.")
+            fig, ax = plt.subplots()
+            draw_on_canvas(fig)
+            Plot(G)
+            fig.canvas.mpl_connect('button_press_event', on_click)
+        else:
+            print("Error: uno o ambos nodos no existen.")
+
+def delete_node():
+    global G
+    if G is None:
+        print("Crea o carga primero un grafo.")
+        return
+
+    name = simpledialog.askstring("Eliminar nodo", "Nombre del nodo a eliminar:")
+    if name:
+        if DeleteNode(G, name):
+            print(f"Nodo {name} eliminado correctamente.")
+            fig, ax = plt.subplots()
+            draw_on_canvas(fig)
+            Plot(G)
+            fig.canvas.mpl_connect('button_press_event', on_click)
+        else:
+            print(f"El nodo {name} no existe.")
+
+def delete_segment():
+    global G
+    if G is None:
+        print("Crea o carga primero un grafo.")
+        return
+
+    name = simpledialog.askstring("Eliminar segmento", "Nombre del segmento (ej. AB):")
+    if name:
+        if DeleteSegment(G, name):
+            print(f"Segmento {name} eliminado correctamente.")
+            fig, ax = plt.subplots()
+            draw_on_canvas(fig)
+            Plot(G)
+            fig.canvas.mpl_connect('button_press_event', on_click)
+        else:
+            print(f"El segmento {name} no existe.")
+
+def create_empty_graph():
+    global G
+    G = Graph()
+    fig, ax = plt.subplots()
+    draw_on_canvas(fig)
+    print("Nuevo grafo vacío creado.")
+
+def save_graph_to_file():
+    global G
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt")
+    if file_path:
+        G.save_to_file(file_path)
+        print(f"Grafo guardado en: {file_path}")
+
 # Interfaz gráfica
 root = tk.Tk()
 root.geometry('800x400')
@@ -121,6 +247,7 @@ root.columnconfigure(0, weight=1)
 root.columnconfigure(1, weight=10)
 root.rowconfigure(0, weight=1)
 root.rowconfigure(1, weight=1)
+
 
 button_frame = tk.LabelFrame(root, text='Opciones')
 button_frame.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
@@ -136,6 +263,33 @@ button3.grid(row=2, column=0, padx=5, pady=5, sticky="nsew")
 
 button4 = tk.Button(button_frame, text='Alcanzables', command=show_reachability)
 button4.grid(row=3, column=0, padx=5, pady=5, sticky="nsew")
+
+button5 = tk.Button(button_frame, text='Grafo de ejemplo', command=show_example_graph)
+button5.grid(row=4, column=0, padx=5, pady=5, sticky="nsew")
+
+button6 = tk.Button(button_frame, text='Grafo inventado', command=show_custom_graph)
+button6.grid(row=5, column=0, padx=5, pady=5, sticky="nsew")
+
+button7 = tk.Button(button_frame, text='Cargar grafo desde archivo', command=load_graph_from_file)
+button7.grid(row=6, column=0, padx=5, pady=5, sticky="nsew")
+
+button8 = tk.Button(button_frame, text='Añadir nodo', command=add_node)
+button8.grid(row=7, column=0, padx=5, pady=5, sticky="nsew")
+
+button9 = tk.Button(button_frame, text='Añadir segmento', command=add_segment)
+button9.grid(row=8, column=0, padx=5, pady=5, sticky="nsew")
+
+button10 = tk.Button(button_frame, text='Eliminar nodo', command=delete_node)
+button10.grid(row=9, column=0, padx=5, pady=5, sticky="nsew")
+
+button11 = tk.Button(button_frame, text='Eliminar segmento', command=delete_segment)
+button11.grid(row=10, column=0, padx=5, pady=5, sticky="nsew")
+
+button12 = tk.Button(button_frame, text='Nuevo grafo vacío', command=create_empty_graph)
+button12.grid(row=11, column=0, padx=5, pady=5, sticky="nsew")
+
+button13 = tk.Button(button_frame, text='Guardar grafo a archivo', command=save_graph_to_file)
+button13.grid(row=12, column=0, padx=5, pady=5, sticky="nsew")
 
 picture_frame = tk.LabelFrame(root, text='Gráfico')
 picture_frame.grid(row=0, column=1, rowspan=3, padx=5, pady=5, sticky="nsew")

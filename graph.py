@@ -371,3 +371,137 @@ def FindShortestPath(G, nameOrg, nameDst):
                open_paths.append(new_path)
 
    return best_path
+
+def CreateGraph_1():
+    G = Graph()
+    AddNode(G, Node("A", 1, 20))
+    AddNode(G, Node("B", 8, 17))
+    AddNode(G, Node("C", 15, 20))
+    AddNode(G, Node("D", 18, 15))
+    AddNode(G, Node("E", 2, 4))
+    AddNode(G, Node("F", 6, 5))
+    AddNode(G, Node("G", 12, 12))
+    AddNode(G, Node("H", 10, 3))
+    AddNode(G, Node("I", 19, 1))
+    AddNode(G, Node("J", 13, 5))
+    AddNode(G, Node("K", 3, 15))
+    AddNode(G, Node("L", 4, 10))
+    AddSegment(G, "AB", "A", "B")
+    AddSegment(G, "AE", "A", "E")
+    AddSegment(G, "AK", "A", "K")
+    AddSegment(G, "BA", "B", "A")
+    AddSegment(G, "BC", "B", "C")
+    AddSegment(G, "BF", "B", "F")
+    AddSegment(G, "BK", "B", "K")
+    AddSegment(G, "BG", "B", "G")
+    AddSegment(G, "CD", "C", "D")
+    AddSegment(G, "CG", "C", "G")
+    AddSegment(G, "DG", "D", "G")
+    AddSegment(G, "DH", "D", "H")
+    AddSegment(G, "DI", "D", "I")
+    AddSegment(G, "EF", "E", "F")
+    AddSegment(G, "FL", "F", "L")
+    AddSegment(G, "GB", "G", "B")
+    AddSegment(G, "GF", "G", "F")
+    AddSegment(G, "GH", "G", "H")
+    AddSegment(G, "ID", "I", "D")
+    AddSegment(G, "IJ", "I", "J")
+    AddSegment(G, "JI", "J", "I")
+    AddSegment(G, "KA", "K", "A")
+    AddSegment(G, "KL", "K", "L")
+    AddSegment(G, "LK", "L", "K")
+    AddSegment(G, "LF", "L", "F")
+    return G
+
+def CreateGraph_2():
+    G = Graph()
+    AddNode(G, Node("A", 1, 20))
+    AddNode(G, Node("B", 7, 17))
+    AddNode(G, Node("C", 1, 20))
+    AddNode(G, Node("D", 8, 15))
+    AddNode(G, Node("E", 2, 4))
+    AddNode(G, Node("F", 6, 5))
+    AddNode(G, Node("G", 12, 12))
+    AddSegment(G, "AB", "A", "B")
+    AddSegment(G, "AE", "A", "E")
+    AddSegment(G, "AK", "A", "K")
+    AddSegment(G, "BA", "B", "A")
+    AddSegment(G, "BC", "B", "C")
+    AddSegment(G, "BF", "B", "F")
+    AddSegment(G, "BK", "B", "K")
+    AddSegment(G, "FL", "F", "L")
+    AddSegment(G, "GB", "G", "B")
+    AddSegment(G, "GF", "G", "F")
+    AddSegment(G, "GH", "G", "H")
+    AddSegment(G, "ID", "I", "D")
+    AddSegment(G, "IJ", "I", "J")
+    AddSegment(G, "JI", "J", "I")
+    AddSegment(G, "KA", "K", "A")
+    AddSegment(G, "KL", "K", "L")
+    AddSegment(G, "LK", "L", "K")
+    AddSegment(G, "LF", "L", "F")
+    return G
+
+# Funciones de botones
+def graph1():
+    fig, ax = plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                        sticky=tk.N + tk.E + tk.W + tk.S)
+    global G
+    G = CreateGraph_1()
+    Plot(G)
+
+
+def graph2():
+    fig, ax = plt.subplots()
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    global canvas_picture
+    if 'canvas_picture' in globals():
+        canvas_picture.grid_forget()
+    canvas_picture = canvas.get_tk_widget()
+    canvas_picture.config(width=600, height=400)
+    canvas_picture.grid(row=0, column=0, padx=5, pady=5,
+                        sticky=tk.N + tk.E + tk.W + tk.S)
+    global G
+    G = CreateGraph_2()
+    Plot(G)
+
+def DeleteNode(g, name):
+    node_to_remove = next((n for n in g.nodes if n.name == name), None)
+    if node_to_remove is None:
+        return False
+
+    g.nodes.remove(node_to_remove)
+    g.segments = [s for s in g.segments if s.origin_node != node_to_remove and s.destination_node != node_to_remove]
+
+    # Quitar el nodo de las listas de vecinos de otros nodos
+    for n in g.nodes:
+        if node_to_remove in n.neighbors:
+            n.neighbors.remove(node_to_remove)
+
+    return True
+
+def DeleteSegment(g, name):
+    # Buscar el segmento por su nombre (ej: "AB", "XY", etc.)
+    segment_to_remove = None
+    for s in g.segments:
+        if s.origin_node.name + s.destination_node.name == name:
+            segment_to_remove = s
+            break
+
+    if segment_to_remove:
+        g.segments.remove(segment_to_remove)
+        # También quitar el nodo destino de los vecinos del origen
+        if segment_to_remove.destination_node in segment_to_remove.origin_node.neighbors:
+            segment_to_remove.origin_node.neighbors.remove(segment_to_remove.destination_node)
+        return True
+    else:
+        return False
