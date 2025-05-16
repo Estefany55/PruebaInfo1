@@ -9,8 +9,10 @@ class Node:
        y -- Coordenada Y del nodo
        """
        self.name = name  # Nombre del nodo
-       self.x = x  # Coordenada X
-       self.y = y  # Coordenada Y
+       self.x = float(x)  # Coordenada X o longitud
+       self.y = float(y)  # Coordenada Y o latitud
+       self.lon = self.x  # Alias para longitud
+       self.lat = self.y  # Alias para latitud
        self.neighbors = []  # Lista de nodos vecinos
 
 

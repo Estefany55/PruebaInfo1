@@ -1,0 +1,11 @@
+# Ignorar archivos generados automáticamente por Python
+__pycache__/
+*.py[cod]
+
+# Ignorar configuración local de PyCharm
+.idea/
+*.iml
+
+# Ignorar entornos virtuales si usas
+venv/
+.env/
