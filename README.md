@@ -4,5 +4,5 @@ version 1 generada por Estefany
 
 version 1 verificada por Diana   
 version 1 comunicada por Nuria   
-url del video xxxx
+url del video xxxx   
 version 2 modificada por Estefany y Roger

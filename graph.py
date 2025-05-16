@@ -126,7 +126,7 @@ def Plot(g):
        plt.arrow(segment.origin_node.x, segment.origin_node.y,
                  segment.destination_node.x - segment.origin_node.x,
                  segment.destination_node.y - segment.origin_node.y,
-                 head_width=0.4, head_length=0.4, fc='blue', ec='blue', length_includes_head=True)
+                 head_width=0.1, head_length=0.1, fc='blue', ec='blue', length_includes_head=True)
 
 
    # Dibuja los nodos del grafo
@@ -141,20 +141,21 @@ def Plot(g):
    plt.ylabel('Y')
    plt.title("Graph with nodes and segments")
    plt.grid()
-   plt.show() # Muestra el gráfico
+# Muestra el gráfico
 
 
 
 
 # Función para graficar un nodo y sus vecinos
+"""
 def PlotNode(g, name):
-   """Dibuja el grafo resaltando un nodo específico y sus vecinos con flechas.
+   """"""Dibuja el grafo resaltando un nodo específico y sus vecinos con flechas.
 
 
    Parámetros:
    g -- Objeto de la clase Graph
    name -- Nombre del nodo a resaltar
-   """
+   """"""
    target_node = None  # Variable para almacenar el nodo buscado
 
 
@@ -203,9 +204,46 @@ def PlotNode(g, name):
    plt.ylabel('Y')
    plt.title(f"Graph with nodes and segments for node '{name}'")
    plt.grid()
-   plt.show() # Muestra el gráfico
+   plt.show()
 
 
+ # Muestra el gráfico
+
+
+"""
+def PlotNode(g, name, ax=None):
+    """Dibuja el grafo resaltando un nodo específico y sus vecinos con flechas."""
+    target_node = next((n for n in g.nodes if n.name == name), None)
+    if target_node is None:
+        print(f"Node '{name}' does not exist in the graph.")
+        return
+
+    if ax is None:
+        fig, ax = plt.subplots()
+
+    ax.clear()
+
+    # Dibuja todos los nodos
+    for node in g.nodes:
+        ax.plot(node.x, node.y, marker='o', linestyle='', color='black', markersize=5)
+        ax.text(node.x, node.y, node.name, ha='left', va='bottom', color='red', fontsize=7)
+
+    # Dibuja los segmentos entre el nodo seleccionado y sus vecinos
+    for neighbor in target_node.neighbors:
+        for segment in g.segments:
+            if (segment.origin_node == target_node and segment.destination_node == neighbor) or \
+               (segment.origin_node == neighbor and segment.destination_node == target_node):
+                dx = segment.destination_node.x - segment.origin_node.x
+                dy = segment.destination_node.y - segment.origin_node.y
+                ax.arrow(segment.origin_node.x, segment.origin_node.y, dx, dy,
+                         head_width=0.1, length_includes_head=True, fc='blue', ec='blue')
+                mx = (segment.origin_node.x + segment.destination_node.x) / 2
+                my = (segment.origin_node.y + segment.destination_node.y) / 2
+                ax.text(mx, my, round(segment.cost, 2), fontsize=8)
+
+    ax.set_title(f"Nodo seleccionado: {target_node.name}")
+    ax.set_aspect('equal', adjustable='datalim')
+    ax.grid()
 
 
 def LoadGraphFromFile(file_path):
@@ -358,3 +396,71 @@ def FindShortestPath(G, nameOrg, nameDst):
                open_paths.append(new_path)
 
    return best_path
+
+#INTERFICIE 2 (DIANA)
+
+def DeleteNode(g, name):
+    node_to_remove = next((n for n in g.nodes if n.name == name), None)
+    if node_to_remove is None:
+        return False
+
+    g.nodes.remove(node_to_remove)
+    g.segments = [s for s in g.segments if s.origin_node != node_to_remove and s.destination_node != node_to_remove]
+
+    # Quitar el nodo de las listas de vecinos de otros nodos
+    for n in g.nodes:
+        if node_to_remove in n.neighbors:
+            n.neighbors.remove(node_to_remove)
+
+    return True
+
+def DeleteSegment(g, name):
+    # Buscar segmento directo
+    segment_to_remove = next((s for s in g.segments if s.origin_node.name + s.destination_node.name == name), None)
+
+    # Si no existe, intenta con el orden inverso
+    if not segment_to_remove:
+        reversed_name = name[::-1]
+        segment_to_remove = next((s for s in g.segments if s.origin_node.name + s.destination_node.name == reversed_name), None)
+
+    if segment_to_remove:
+        g.segments.remove(segment_to_remove)
+
+        # Quitar también el vecino
+        if segment_to_remove.destination_node in segment_to_remove.origin_node.neighbors:
+            segment_to_remove.origin_node.neighbors.remove(segment_to_remove.destination_node)
+
+        return True
+
+    return False
+
+
+def save_to_file(self, filename):
+   with open(filename, 'w') as f:
+       f.write("Nodes:\n")
+       for node in self.nodes:
+           f.write(f"{node.name},{node.x},{node.y}\n")
+       f.write("Segments:\n")
+       for segment in self.segments:
+           f.write(f"{segment.origin_node.name}{segment.destination_node.name},{segment.origin_node.name},{segment.destination_node.name}\n")
+
+
+def load_from_file(cls, filename):
+   graph = cls()
+   with open(filename, 'r') as file:
+       mode = None
+       for line in file:
+           line = line.strip()
+           if line.startswith("Nodes:"):
+               mode = "nodes"
+               continue
+           elif line.startswith("Segments:"):
+               mode = "segments"
+               continue
+           if mode == "nodes":
+               name, x, y = line.split(',')
+               graph.add_node(name, float(x), float(y))
+           elif mode == "segments":
+               origin, destination = line.split(',')
+               graph.add_segment(origin + destination, origin, destination)
+       return graph
