@@ -316,38 +316,20 @@ def PlotNode(g, name, ax=None):
 
 def LoadGraphFromFile(file_path):
   """Carga un grafo desde un archivo de texto.
-
-
-
-
   Parámetros:
   file_path -- Ruta del archivo que contiene la definición del grafo.
-
-
-
-
   Retorna:
   Un objeto Graph si la carga es exitosa, o None si hay un error.
   """
   g = Graph()  # Se crea una nueva instancia de Graph
-
-
-
-
   try:
       with open(file_path, 'r') as file:  # Abre el archivo en modo lectura
           mode = None  # Variable para determinar si se están leyendo nodos o segmentos
           for line in file:
               line = line.strip()  # Elimina espacios en blanco al inicio y al final de la línea
 
-
-
-
               if not line:  # Si la línea está vacía, se ignora
                   continue
-
-
-
 
               if line.startswith("Nodes:"):  # Si se encuentra la sección de nodos
                   mode = "nodes"
@@ -356,9 +338,6 @@ def LoadGraphFromFile(file_path):
                   mode = "segments"
                   continue
 
-
-
-
               if mode == "nodes":  # Si estamos en la sección de nodos
                   name, x, y = line.split(',')  # Separa los valores por coma
                   AddNode(g, Node(name, float(x), float(y)))  # Crea y añade el nodo al grafo
@@ -366,13 +345,7 @@ def LoadGraphFromFile(file_path):
                   segment_id, origin_name, destination_name = line.split(',')  # Separa los valores por coma
                   AddSegment(g, segment_id, origin_name, destination_name)  # Crea y añade el segmento al grafo
 
-
-
-
       return g  # Retorna el grafo cargado
-
-
-
 
   except FileNotFoundError:  # Manejo de error si el archivo no se encuentra
       print(f"Error: File '{file_path}' not found.")
@@ -382,15 +355,11 @@ def LoadGraphFromFile(file_path):
       return None
 
 
-
-
 def add_node(self, name, x, y):
   if any(node.name == name for node in self.nodes):
       return False
   self.nodes.append(Node(name, x, y))
   return True
-
-
 
 
 def add_segment(self, name, origin_name, destination_name):
@@ -404,13 +373,9 @@ def add_segment(self, name, origin_name, destination_name):
   return False
 
 
-
-
 def delete_node(self, name):
   self.nodes = [n for n in self.nodes if n.name != name]
   self.segments = [s for s in self.segments if s.origin_node.name != name and s.destination_node.name != name]
-
-
 
 
 def save_to_file(self, filename):
@@ -421,8 +386,6 @@ def save_to_file(self, filename):
       f.write("Segments:\n")
       for segment in self.segments:
           f.write(f"{segment.origin_node.name}{segment.destination_node.name},{segment.origin_node.name},{segment.destination_node.name}\n")
-
-
 
 
 def load_from_file(cls, filename):
@@ -551,8 +514,6 @@ def DeleteSegment(g, name):
    return False
 
 
-
-
 def save_to_file(self, filename):
   with open(filename, 'w') as f:
       f.write("Nodes:\n")
@@ -561,8 +522,6 @@ def save_to_file(self, filename):
       f.write("Segments:\n")
       for segment in self.segments:
           f.write(f"{segment.origin_node.name}{segment.destination_node.name},{segment.origin_node.name},{segment.destination_node.name}\n")
-
-
 
 
 def load_from_file(cls, filename):
@@ -585,3 +544,48 @@ def load_from_file(cls, filename):
               graph.add_segment(origin + destination, origin, destination)
       return graph
 
+
+#VERSION 4
+
+def NodeToKML (g,name1,name2, nomFile):
+   # Open the specified file for writing
+   F = open(nomFile, 'w')
+   # Write the initial KML structure and document name
+   F.write('<kml xmlns="http://www.opengis.net/kml/2.2">\n<Document>\n<Placemark>\n<name>' + name1 +  '</name>\n')
+   target_node = None  # Variable para almacenar el nodo buscado
+
+
+   # Busca el nodo por nombre en la lista de nodos del grafo
+   for node in g.nodes:
+       if node.name == name1:
+           target_node = node
+           break  # Termina la búsqueda una vez encontrado
+
+
+   # Si el nodo no existe, muestra un mensaje y termina la función
+   if target_node is None:
+       print(f"Node '{name1}' does not exist in the graph.")
+       return
+   target_node1 = None
+   for node in g.nodes:
+       if node.name == name2:
+           target_node1 = node
+           break  # Termina la búsqueda una vez encontrado
+
+
+   # Si el nodo no existe, muestra un mensaje y termina la función
+   if target_node1 is None:
+       print(f"Node '{name2}' does not exist in the graph.")
+       return
+
+
+   F.write('<Point>\n<coordinates>\n')
+   F.write(str(target_node.x) + ',' + str(target_node.y)+'\n')
+   F.write('</coordinates>\n</Point>\n</Placemark>\n<Placemark> <name>' + name2 +  '</name>\n')
+   F.write('<Point>\n<coordinates>\n')
+   F.write(str(target_node1.x) + ',' + str(target_node1.y)+'\n')
+   # Write the closing tags for coordinates, LineString, Placemark, Document, and KML
+   F.write('\n</coordinates>\n</Point>\n')
+   F.write('</Placemark>\n</Document>\n</kml>')
+   # Close the file
+   F.close()

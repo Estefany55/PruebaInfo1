@@ -5,6 +5,15 @@ from matplotlib.backend_bases import MouseEvent
 from tkinter import simpledialog, filedialog
 import os
 
+import tkinter.simpledialog as simpledialog
+import tkinter.messagebox as messagebox
+from graph import NodeToKML
+from path import pathToKML
+
+from airSpace import*
+A = buildAirSpace("Cat")
+L = buildAirGraf(A)
+
 
 def CreateGraph_1():
  G = Graph()
@@ -97,33 +106,35 @@ accion_en_espera = None
 modo_visualizacion = "vecinos"
 canvas_picture = None
 
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
-
-
-# Función para actualizar el canvas
 def draw_on_canvas(fig):
-  global canvas_picture
-  canvas = FigureCanvasTkAgg(fig, master=picture_frame)
-  canvas.draw()
+    global canvas_picture, canvas_toolbar
+
+    # Clear previous widgets
+    for widget in picture_frame.winfo_children():
+        widget.destroy()
+
+    # Create the canvas and add to picture_frame
+    canvas = FigureCanvasTkAgg(fig, master=picture_frame)
+    canvas.draw()
+    canvas_widget = canvas.get_tk_widget()
+    canvas_widget.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
 
+    # Create a subframe to hold the toolbar (it can use pack inside it)
+    toolbar_frame = tk.Frame(picture_frame)
+    toolbar_frame.grid(row=1, column=0, sticky="ew")
 
+    # Create toolbar and attach to toolbar_frame
+    toolbar = NavigationToolbar2Tk(canvas, toolbar_frame)
+    toolbar.update()
 
-  if canvas_picture:
-      canvas_picture.destroy()
+    # Save references
+    canvas_picture = canvas_widget
+    canvas_toolbar = toolbar
 
-
-
-
-  canvas_picture = canvas.get_tk_widget()
-  canvas_picture.config(width=600, height=400)
-  canvas_picture.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
-
-
-
-
-  fig.canvas.mpl_connect('button_press_event', on_click)
-
+    fig.canvas.mpl_connect('button_press_event', on_click)
 
 
 
@@ -212,6 +223,15 @@ def set_accion(modo):
       print("Modo activo: vecinos. Haz clic sobre un nodo.")
   elif modo == "alcanzables":
       print("Modo activo: alcanzables. Haz clic sobre un nodo.")
+
+#LUPA
+def activate_zoom_mode():
+    if hasattr(picture_frame, "canvas") and hasattr(picture_frame, "toolbar"):
+        toolbar = picture_frame.toolbar
+        toolbar.zoom()
+        print("Zoom mode activated.")
+    else:
+        print("No graph loaded yet.")
 
 
 
@@ -372,13 +392,84 @@ def save_graph_to_file():
 
 
 
+#version4
+"""def generate_kml():
+    try:
+        name1 = simpledialog.askstring("Nodo 1", "Dime el nodo 1 (en mayúscula):")
+        name2 = simpledialog.askstring("Nodo 2", "Dime el nodo 2 (en mayúscula):")
+
+        if not name1 or not name2:
+            messagebox.showwarning("Entrada inválida", "Debes introducir ambos nodos.")
+            return
+
+        # L = your graph object (should be globally accessible or passed in)
+        NodeToKML(L, name1, name2, 'node.kml')
+
+        name3 = simpledialog.askstring("Ruta nodo 1", "Dime el nodo INICIAL para la ruta (en mayúscula):")
+        name4 = simpledialog.askstring("Ruta nodo 2", "Dime el nodo FINAL para la ruta (en mayúscula):")
+
+        if not name3 or not name4:
+            messagebox.showwarning("Entrada inválida", "Debes introducir ambos nodos para la ruta.")
+            return
+
+        path = FindShortestPath(L, name3, name4)  # Make sure this function is available
+        if path:
+            pathToKML(path, "path.kml")
+            messagebox.showinfo("Éxito", "Archivos KML generados con éxito: node.kml y path.kml")
+        else:
+            messagebox.showerror("Error", f"No se encontró una ruta entre {name3} y {name4}")
+    except Exception as e:
+        messagebox.showerror("Error", f"Ocurrió un error: {str(e)}")
 
 
+def open_in_google_earth():
+    try:
+        # Path to the generated KML files
+        node_kml = os.path.abspath("node.kml")
+        path_kml = os.path.abspath("path.kml")
 
+        # Check if files exist
+        if not os.path.exists(node_kml) or not os.path.exists(path_kml):
+            messagebox.showwarning("Advertencia", "Primero genera los archivos KML.")
+            return
 
+        # Open both in default KML viewer (usually Google Earth)
+        os.startfile(node_kml)
+        os.startfile(path_kml)
 
+        # Optional: Inform the user
+        messagebox.showinfo("Abierto", "Los archivos se han abierto en Google Earth.")
 
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo abrir Google Earth: {str(e)}")
 
+"""
+
+def generar_y_abrir_kml():
+    try:
+        # Ask for input nodes
+        nodo1 = simpledialog.askstring("Entrada", "Dime el nodo 1 para marcar en KML (en mayúsculas):")
+        nodo2 = simpledialog.askstring("Entrada", "Dime el nodo 2 para marcar en KML (en mayúsculas):")
+        if not nodo1 or not nodo2:
+            messagebox.showwarning("Cancelado", "No se ingresaron nodos.")
+            return
+
+        # Generate the KML files
+        NodeToKML(L, nodo1, nodo2, 'node.kml')
+        path = FindShortestPath(L, nodo1, nodo2)
+        if not path:
+            messagebox.showerror("Error", f"No se encontró un camino entre {nodo1} y {nodo2}.")
+            return
+        pathToKML(path, 'path.kml')
+
+        # Open them in Google Earth (if KML association exists)
+        os.startfile(os.path.abspath("node.kml"))
+        os.startfile(os.path.abspath("path.kml"))
+
+        messagebox.showinfo("Éxito", "Archivos KML generados y abiertos en Google Earth.")
+
+    except Exception as e:
+        messagebox.showerror("Error", f"Ocurrió un error: {e}")
 
 
 # Interfaz
@@ -416,14 +507,14 @@ btn_vecinos = tk.Button(top_frame, text="Vecinos", command=lambda: set_accion("v
 btn_vecinos.pack(side="left", padx=5)
 
 
-
-
 btn_alcanzables = tk.Button(top_frame, text="Alcanzables", command=lambda: set_accion("alcanzables"))
 btn_alcanzables.pack(side="left", padx=5)
 
 
 btn_camino = tk.Button(top_frame, text="Camino más corto", command=lambda: set_accion("camino"))
 btn_camino.pack(side="left", padx=5)
+
+
 
 # Botones de acciones
 buttons = [
@@ -436,8 +527,12 @@ buttons = [
   ("Eliminar nodo", delete_node),
   ("Eliminar segmento", delete_segment),
   ("Crear grafo en blanco", create_empty_graph),
-  ("Guardar grafo", save_graph_to_file)
+  ("Guardar grafo", save_graph_to_file),
+  ("General y abrir KML", generar_y_abrir_kml)
 ]
+
+"""""("Generear KML", generate_kml),
+("Abrir Google Earth", open_in_google_earth)"""
 
 for i, (label, command) in enumerate(buttons):
   button_frame.rowconfigure(i,weight=3)

@@ -51,3 +51,21 @@ def PlotPath(graph, path):
    plt.grid()
 
 
+def pathToKML (path, nomFile):
+   # Open the specified file for writing
+   F = open(nomFile, 'w')
+   # Write the initial KML structure and document name
+   F.write('<kml xmlns="http://www.opengis.net/kml/2.2">\n<Document>\n<Placemark>\n<name> Route' + path.nodes[0].name + '-' + path.nodes[-1].name + '</name>\n')
+   i = 0 # Initialize the index for the path nodes
+   # Write the LineString element with its attributes
+   F.write('<LineString>\n<altitudeMode>clampToGround</altitudeMode>\n<extrude>1</extrude>\n<tessellate>1</tessellate>\n<coordinates>\n')
+   # Loop through the nodes in the path to write their coordinates
+   while i < len(path.nodes)-1:
+       # Write the coordinates of the current node and the next node
+       F.write(str(path.nodes[i].x) + ',' + str(path.nodes[i].y) + '\n' + str(path.nodes[i+1].x) + ',' + str(path.nodes[i+1].y))
+       i = i + 1  # Move to the next node in the path
+   # Write the closing tags for coordinates, LineString, Placemark, Document, and KML
+   F.write('\n</coordinates>\n</LineString>\n')
+   F.write('</Placemark>\n</Document>\n</kml>')
+   # Close the file
+   F.close()

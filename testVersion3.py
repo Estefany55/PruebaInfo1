@@ -19,3 +19,11 @@ if P:
   PlotPath(L, P)
 else:
   print("No path found.")
+
+#VERSION 4
+Z = input("Dime el nodo 1 para hacer KML(En mayúscula):")
+Y = input("Dime el nodo 2 para hacer KML(En mayúscula):")
+NodeToKML(L,Z,Y,'node.kml')
+B1 = input("Dime el nodo 1 KML(En mayúscula):")
+C1= input("Dime el nodo 2 KML (En mayúscula):")
+pathToKML(FindShortestPath(L,B1, C1), "path.kml")

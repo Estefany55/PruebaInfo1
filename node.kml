@@ -1,0 +1,20 @@
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+<Placemark>
+<name>MARTA</name>
+<Point>
+<coordinates>
+1.28,40.3547222222
+</coordinates>
+</Point>
+</Placemark>
+<Placemark> <name>DRAGO</name>
+<Point>
+<coordinates>
+1.7655555556,40.0077777778
+
+</coordinates>
+</Point>
+</Placemark>
+</Document>
+</kml>
